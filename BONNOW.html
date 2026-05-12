@@ -1,591 +1,299 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Access Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <title>SUPER BONUS</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            --primary: #8b5cf6;
-            --secondary: #d946ef;
-            --accent: #f59e0b;
-            --gold: #fbbf24;
-            /* УКАЖИТЕ ИМЯ ВАШЕГО ФАЙЛА ИЗ ПАПКИ НИЖЕ */
-            /* Например: url('bg.jpg') или url('my_background.png') */
-            --bg-image-url: url('bg.jpg');
-        }
-
+        /* Базовые стили из твоего файла */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #030305;
-            color: #ffffff;
-            margin: 0;
-            overflow: hidden;
-            height: 100dvh;
             display: flex;
-            align-items: center;
             justify-content: center;
-        }
-
-        /* Слой с фоновым изображением (локальный файл) */
-        .bg-image {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            background-image: var(--bg-image-url);
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            /* Путь к картинке */
+            background-image: url('bg.jpg'); 
             background-size: cover;
             background-position: center;
-            opacity: 0.5; /* Прозрачность картинки */
-            filter: grayscale(10%) brightness(0.4); /* Эффекты для лучшей читаемости текста */
+            background-repeat: no-repeat;
+            background-color: #0f172a; /* Цвет фона, если картинка не загрузится */
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden; /* Блокируем скролл */
         }
 
-        .bg-aura {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            overflow: hidden;
+        .container {
+            background: rgba(0, 0, 0, 0.85); /* Чуть темнее для читаемости */
+            padding: 30px 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            /* Убрал position: relative, чтобы стрелка не зависела от контейнера */
+            display: none; 
         }
 
-        .blob {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: var(--primary);
-            filter: blur(120px);
+        h1 {
+            margin-top: 0;
+            font-size: 22px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        /* --- СТРЕЛКА (ИСПРАВЛЕНО: МЕНЬШЕ И БЛИЖЕ К УГЛУ) --- */
+        .arrow {
+            position: fixed; /* Фиксируем относительно ЭКРАНА */
+            top: 10px;       /* Ближе к верхнему краю (было 20px) */
+            right: 10px;     /* Ближе к правому краю (было 20px) */
+            font-size: 2.5em; /* Уменьшен размер (было 4em) */
+            z-index: 1000;   /* Поверх всего */
+            animation: arrowMove 1s infinite alternate;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        @keyframes arrowMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); } /* Амплитуда движения тоже чуть меньше */
+        }
+
+        .steps {
+            margin: 20px 0;
+            text-align: left;
+            padding: 0 10px;
+        }
+
+        .steps p {
+            margin: 15px 0;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .steps p:nth-child(2) {
+            font-weight: bold;
+            color: #4ade80; /* Зеленоватый оттенок для акцента */
+            animation: textZoom 1s infinite alternate;
+        }
+
+        @keyframes textZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        /* --- СТИЛИ ДЛЯ ЛОАДЕРА (Когда идет редирект) --- */
+        .loader {
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #f59e0b; /* Золотой цвет */
             border-radius: 50%;
-            opacity: 0.2;
-            animation: move 25s infinite alternate;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
         }
 
-        .blob-2 {
-            background: var(--secondary);
-            right: -100px;
-            top: -100px;
-            animation-duration: 30s;
-            opacity: 0.15;
+        .redirect-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        @keyframes move {
-            from { transform: translate(-10%, -10%); }
-            to { transform: translate(20%, 20%); }
-        }
-
-        h1, h2, .font-unbounded { 
-            font-family: 'Unbounded', sans-serif; 
-            letter-spacing: -0.04em;
-        }
-
-        .glass-card {
-            background: rgba(10, 10, 15, 0.45);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 56px;
-            padding: 3.5rem 1.75rem 3rem;
-            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.9);
-            position: relative;
-            z-index: 10;
-        }
-
-        .gift-float {
-            filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.5));
-            animation: float 4s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(-4deg); }
-            50% { transform: translateY(-20px) rotate(4deg); }
-        }
-
-        .premium-btn {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-            background-size: 200% 200%;
-            animation: gradient-shift 5s linear infinite;
-            box-shadow: 0 15px 35px -10px rgba(99, 102, 241, 0.6);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .scanner-line {
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-            position: absolute;
-            top: 0;
-            animation: scan 2s linear infinite;
-            box-shadow: 0 0 20px var(--primary);
-            z-index: 20;
-        }
-
-        @keyframes scan {
-            0% { top: 0; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        .arrow-indicator {
-            animation: arrow-float 1.4s infinite ease-in-out;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        @keyframes arrow-float {
-            0%, 100% { transform: translateY(0); opacity: 0.2; }
-            50% { transform: translateY(12px); opacity: 0.9; }
-        }
-
-        .step-hidden { display: none; }
-        .fade-in { animation: fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(40px) scale(0.92); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            background-size: 200% 100%;
-            animation: shimmer 2.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <!-- Фоновое изображение -->
-    <div class="bg-image"></div>
-    <div class="bg-aura">
-        <div class="blob"></div>
-        <div class="blob blob-2"></div>
+    <!-- БЛОК 1: ДЛЯ ВСТРОЕННЫХ БРАУЗЕРОВ (TIKTOK/INSTAGRAM) -->
+    <div id="in-app-view" class="container">
+        <!-- Стрелка вынесена визуально через position: fixed -->
+        <div class="arrow">⬆️</div>
+        
+        <h1 id="mainText">You must run browser for the best experience play 🎰</h1>
+        <div class="steps">
+            <p id="step1">1. Click the three dots in the top right corner</p>
+            <p id="step2">2. Tap "Open in browser" from the menu that opens</p>
+        </div>
     </div>
 
-    <div class="w-full max-w-[410px] px-6">
-        
-        <!-- ЭКРАН 1: Оффер -->
-        <div id="step-1" class="glass-card text-center space-y-8 fade-in">
-            <div class="relative py-2">
-                <div class="gift-float inline-block">
-                    <!-- Иконка Подарка (Gift Box) -->
-                    <svg width="110" height="110" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 12V22H4V12" stroke="url(#gift_grad)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M22 7H2V12H22V7Z" fill="url(#gift_grad_2)" stroke="white" stroke-width="0.8" stroke-linejoin="round"/>
-                        <path d="M12 22V7" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
-                        <path d="M12 7H16.5C16.5 7 16.5 3 12 3C7.5 3 7.5 7 12 7Z" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 7H7.5C7.5 7 7.5 3 12 3" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <defs>
-                            <linearGradient id="gift_grad" x1="4" y1="12" x2="20" y2="22" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#8B5CF6"/>
-                                <stop offset="1" stop-color="#EC4899"/>
-                            </linearGradient>
-                            <linearGradient id="gift_grad_2" x1="2" y1="7" x2="22" y2="12" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#EC4899"/>
-                                <stop offset="1" stop-color="#F59E0B"/>
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <h1 class="text-[22px] font-black leading-tight tracking-tight uppercase">
-                    <span id="txt-title-top">ВАМ ПРЕДОСТАВЛЕНА</span> <br>
-                    <span id="txt-title-main" class="text-indigo-400 text-[28px] drop-shadow-[0_0_15px_rgba(129,140,248,0.4)]">УНИКАЛЬНАЯ ВОЗМОЖНОСТЬ</span>
-                </h1>
-                <p id="txt-desc" class="text-gray-300 text-sm font-medium leading-relaxed px-4">
-                    Не упусти данный шанс и используй его!
-                </p>
-            </div>
-
-            <!-- Анимированные стрелки -->
-            <div class="flex justify-center gap-14 pt-2">
-                <svg class="w-7 h-7 arrow-indicator" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7-7-7" />
-                </svg>
-                <svg class="w-7 h-7 arrow-indicator" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="animation-delay: 0.2s">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7-7-7" />
-                </svg>
-                <svg class="w-7 h-7 arrow-indicator" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="animation-delay: 0.4s">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 14l-7 7-7-7" />
-                </svg>
-            </div>
-
-            <button onclick="startProcess()" class="premium-btn w-full py-5 text-white text-[19px] font-black rounded-[28px] transform transition active:scale-95 uppercase tracking-[0.1em]">
-                <span id="txt-btn-main">ЗАБРАТЬ СЕЙЧАС</span>
-            </button>
-            
-            <div class="flex items-center justify-center gap-2 text-[11px] text-gray-500 font-bold tracking-widest uppercase">
-                <span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></span>
-                <span id="txt-status-ok">Доступ подтвержден</span>
-            </div>
+    <!-- БЛОК 2: ДЛЯ ОБЫЧНЫХ БРАУЗЕРОВ (РЕДИРЕКТ) -->
+    <div id="browser-view" class="container" style="background: rgba(0,0,0,0.6);">
+        <div class="loader"></div>
+        <div class="redirect-text" id="redirectText">
+            Loading Bonus...
         </div>
-
-        <!-- ЭКРАН 2: Лоадер -->
-        <div id="step-2" class="step-hidden text-center space-y-10">
-            <div class="relative w-52 h-52 mx-auto glass-card !p-0 flex items-center justify-center overflow-hidden !rounded-[40px] border-indigo-500/30">
-                <div class="scanner-line"></div>
-                <svg class="w-24 h-24 text-indigo-400 opacity-40 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.8" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-            </div>
-            <div class="space-y-4">
-                <p id="loader-text" class="text-2xl font-black italic uppercase tracking-tighter text-indigo-400">ВЕРИФИКАЦИЯ...</p>
-                <div class="flex justify-center gap-1.5">
-                    <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
-                    <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                    <div class="w-2 h-2 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ЭКРАН 3: Награда -->
-        <div id="step-3" class="step-hidden fade-in">
-            <div class="glass-card text-center space-y-6 overflow-hidden border-indigo-500/20">
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-600/25 blur-[60px]"></div>
-
-                <div class="space-y-2">
-                    <span id="txt-success-label" class="text-[11px] font-black tracking-[0.4em] text-indigo-400 uppercase">Success Verified</span>
-                    <h2 id="txt-bonus-title" class="text-3xl font-black italic tracking-tighter text-white">ВАШ БОНУС:</h2>
-                </div>
-
-                <div class="relative group">
-                    <div class="absolute -inset-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[36px] blur opacity-30"></div>
-                    <div class="relative py-9 px-4 bg-black/60 border border-white/10 rounded-[36px] overflow-hidden">
-                        <div class="absolute inset-0 shimmer opacity-10"></div>
-                        <div class="text-[40px] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 tracking-tighter leading-none">
-                            +250% & 150 FS
-                        </div>
-                    </div>
-                </div>
-
-                <p id="txt-final-desc" class="text-[12px] text-gray-400 px-4 leading-relaxed font-medium">
-                    Ваш персональный бонус активирован. Используйте данный шанс прямо сейчас!
-                </p>
-
-                <a href="https://eastrk-dt.com/s?a=241617&sm=42728&co=299963&mt=26&s1=e2&s2=E1" class="block w-full py-5 bg-white text-black text-[20px] font-black rounded-[28px] transform transition hover:bg-gray-100 active:scale-95 uppercase tracking-tighter">
-                    <span id="txt-btn-final">ПОЛУЧИТЬ ВСЁ</span>
-                </a>
-            </div>
-        </div>
-
     </div>
 
     <script>
-        const translations = {
-            ru: {
-                titleTop: "ВАМ ПРЕДОСТАВЛЕНА",
-                titleMain: "УНИКАЛЬНАЯ ВОЗМОЖНОСТЬ",
-                desc: "Не упусти данный шанс и используй его!",
-                btnMain: "ЗАБРАТЬ СЕЙЧАС",
-                statusOk: "Доступ подтвержден",
-                verifying: "ВЕРИФИКАЦИЯ...",
-                steps: ["АНАЛИЗ СЕТИ...", "ПОИСК ДОСТУПА...", "ГЕНЕРАЦИЯ...", "ГОТОВО!"],
-                successLabel: "Success Verified",
-                bonusTitle: "ВАШ БОНУС:",
-                finalDesc: "Ваш персональный бонус активирован. Используйте данный шанс прямо сейчас!",
-                btnFinal: "ПОЛУЧИТЬ ВСЁ"
-            },
-            en: {
-                titleTop: "YOU HAVE BEEN GIVEN",
-                titleMain: "A UNIQUE OPPORTUNITY",
-                desc: "Don't miss this chance and use it right now!",
-                btnMain: "CLAIM NOW",
-                statusOk: "Access Verified",
-                verifying: "VERIFICATION...",
-                steps: ["NETWORK ANALYSIS...", "SEARCHING ACCESS...", "GENERATING...", "READY!"],
-                successLabel: "Success Verified",
-                bonusTitle: "YOUR BONUS:",
-                finalDesc: "Your personal bonus has been activated. Use this chance right now!",
-                btnFinal: "GET EVERYTHING"
-            },
-            de: {
-                titleTop: "IHNEN WURDE EINE",
-                titleMain: "EINZIGARTIGE CHANCE GEGEBEN",
-                desc: "Verpassen Sie diese Chance nicht und nutzen Sie sie sofort!",
-                btnMain: "JETZT SICHERN",
-                statusOk: "Zugriff Verifiziert",
-                verifying: "VERIFIZIERUNG...",
-                steps: ["NETZWERKANALYSE...", "ZUGANGSSUCHE...", "GENERIERUNG...", "FERTIG!"],
-                successLabel: "Erfolgreich Verifiziert",
-                bonusTitle: "IHR BONUS:",
-                finalDesc: "Ihr persönlicher Bonus wurde aktiviert. Nutzen Sie diese Chance jetzt!",
-                btnFinal: "ALLES ERHALTEN"
-            },
-            fr: {
-                titleTop: "VOUS AVEZ REÇU",
-                titleMain: "UNE OPPORTUNITÉ UNIQUE",
-                desc: "Ne manquez pas cette chance et profitez-en dès maintenant !",
-                btnMain: "RÉCUPÉRER MAINTENANT",
-                statusOk: "Accès Vérifié",
-                verifying: "VÉRIFICATION...",
-                steps: ["ANALYSE RÉSEAU...", "RECHERCHE D'ACCÈS...", "GÉNÉRATION...", "PRÊT !"],
-                successLabel: "Vérification Réussie",
-                bonusTitle: "VOTRE BONUS :",
-                finalDesc: "Votre bonus personnel a été activé. Profitez de cette chance maintenant !",
-                btnFinal: "TOUT RÉCUPÉRER"
-            },
-            it: {
-                titleTop: "TI È STATA DATA",
-                titleMain: "UN'OPPORTUNITÀ UNICA",
-                desc: "Non perdere questa occasione e usala subito!",
-                btnMain: "RICHIEDI ORA",
-                statusOk: "Accesso Verificato",
-                verifying: "VERIFICA...",
-                steps: ["ANALISI RETE...", "RICERCA ACCESSO...", "GENERAZIONE...", "PRONTO!"],
-                successLabel: "Verificato con Successo",
-                bonusTitle: "IL TUO BONUS:",
-                finalDesc: "Il tuo bonus personale è stato attivato. Usa questa occasione subito!",
-                btnFinal: "OTTIENI TUTTO"
-            },
-            hu: {
-                titleTop: "ÖNNEK ADOTT",
-                titleMain: "EGYEDÜLÁLLÓ LEHETŐSÉG",
-                desc: "Ne hagyja ki ezt az esélyt, és használja ki most!",
-                btnMain: "IGÉNYLÉS MOST",
-                statusOk: "Hozzáférés Igazolva",
-                verifying: "ELLENŐRZÉS...",
-                steps: ["HÁLÓZATI ELEMZÉS...", "HOZZÁFÉRÉS KERESÉSE...", "GENERÁLÁS...", "KÉSZ!"],
-                successLabel: "Sikeresen Igazolva",
-                bonusTitle: "AZ ÖN BÓNUSZA:",
-                finalDesc: "A személyes bónusza aktiválva lett. Használja ki ezt az esélyt most!",
-                btnFinal: "MINDENT KÉREK"
-            },
-            cs: {
-                titleTop: "BYLA VÁM DÁNA",
-                titleMain: "JEDINEČNÁ PŘÍLEŽITOST",
-                desc: "Nenechte si ujít tuto šanci a využijte ji hned teď!",
-                btnMain: "ZÍSKAT NYNÍ",
-                statusOk: "Přístup Ověřen",
-                verifying: "OVĚŘOVÁNÍ...",
-                steps: ["ANALÝZA SÍTĚ...", "HLEDÁNÍ PŘÍSTUPU...", "GENEROVÁNÍ...", "HOTOVO!"],
-                successLabel: "Úspěšně Ověřeno",
-                bonusTitle: "VÁŠ BONUS:",
-                finalDesc: "Váš osobní bonus byl aktivován. Využijte tuto šanci hned teď!",
-                btnFinal: "ZÍSKAT VŠE"
-            },
-            sk: {
-                titleTop: "BOLA VÁM DANÁ",
-                titleMain: "JEDINEČNÁ PRÍLEŽITOSŤ",
-                desc: "Nenechajte si ujsť túto šancu a využite ju hneď teraz!",
-                btnMain: "ZÍSKAŤ TERAZ",
-                statusOk: "Prístup Overený",
-                verifying: "OVEROVANIE...",
-                steps: ["ANALÝZA SIETE...", "HĽADANIE PRÍSTUPU...", "GENEROVANIE...", "HOTOVO!"],
-                successLabel: "Úspešne Overené",
-                bonusTitle: "VÁŠ BONUS:",
-                finalDesc: "Váš osobný bonus bol aktivovaný. Využite túto šancu hneď teraz!",
-                btnFinal: "ZÍSKAŤ VŠETKO"
-            },
-            el: {
-                titleTop: "ΣΑΣ ΔΟΘΗΚΕ ΜΙΑ",
-                titleMain: "ΜΟΝΑΔΙΚΗ ΕΥΚΑΙΡΙΑ",
-                desc: "Μην χάσετε αυτή την ευκαιρία και χρησιμοποιήστε την τώρα!",
-                btnMain: "ΔΙΕΚΔΙΚΗΣΤΕ ΤΩΡΑ",
-                statusOk: "Πρόσβαση Επιβεβαιώθηκε",
-                verifying: "ΕΠΑΛΗΘΕΥΣΗ...",
-                steps: ["ΑΝΑΛΥΣΗ ΔΙΚΤΥΟΥ...", "ΑΝΑΖΗΤΗΣΗ ΠΡΟΣΒΑΣΗΣ...", "ΔΗΜΙΟΥΡΓΙΑ...", "ΕΤΟΙΜΟ!"],
-                successLabel: "Επιτυχής Επαλήθευση",
-                bonusTitle: "ΤΟ ΜΠΟΝΟΥΣ ΣΑΣ:",
-                finalDesc: "Το προσωπικό σας μπόνους ενεργοποιήθηκε. Χρησιμοποιήστε αυτή την ευκαιρία τώρα!",
-                btnFinal: "ΠΑΡΤΕ ΤΑ ΟΛΑ"
-            },
-            lv: {
-                titleTop: "JUMS IR DOTS",
-                titleMain: "UNIKĀLA IESPĒJA",
-                desc: "Nepalaidiet garām šo iespēju un izmantojiet to tūlīt!",
-                btnMain: "SAŅEMT TAGAD",
-                statusOk: "Piekļuve Apstiprināta",
-                verifying: "VERIFIKĀCIJA...",
-                steps: ["TĪKLA ANALĪZE...", "PIEKĻUVES MEKLĒŠANA...", "GENERĒŠANA...", "GATAVS!"],
-                successLabel: "Veiksmīgi Verificēts",
-                bonusTitle: "JŪSU BONUSS:",
-                finalDesc: "Jūsu personīgais bonuss ir aktivizēts. Izmantojiet šo iespēju tūlīt!",
-                btnFinal: "SAŅEMT VISU"
-            },
-            sv: {
-                titleTop: "DU HAR FÅTT EN",
-                titleMain: "UNIK MÖJLIGHET",
-                desc: "Missa inte denna chans och använd den nu!",
-                btnMain: "HÄMTA NU",
-                statusOk: "Åtkomst Verifierad",
-                verifying: "VERIFIERING...",
-                steps: ["NÄTVERKSANALYS...", "SÖKER ÅTKOMST...", "GENERERAR...", "KLART!"],
-                successLabel: "Verifiering Lyckades",
-                bonusTitle: "DIN BONUS:",
-                finalDesc: "Din personliga bonus har aktiverats. Använd denna chans nu!",
-                btnFinal: "HÄMTA ALLT"
-            },
-            ro: {
-                titleTop: "VI S-A OFERIT O",
-                titleMain: "OPORTUNITATE UNICĂ",
-                desc: "Nu rata această șansă și folosește-o chiar acum!",
-                btnMain: "REVENDICĂ ACUM",
-                statusOk: "Acces Verificat",
-                verifying: "VERIFICARE...",
-                steps: ["ANALIZĂ REȚEA...", "CĂUTARE ACCES...", "GENERARE...", "GATA!"],
-                successLabel: "Verificat cu Succes",
-                bonusTitle: "BONUSUL TĂU:",
-                finalDesc: "Bonusul tău personal a fost activat. Folosește această șansă chiar acum!",
-                btnFinal: "OBȚINE TOTUL"
-            },
-            no: {
-                titleTop: "DU HAR FÅTT EN",
-                titleMain: "UNIK MULIGHET",
-                desc: "Ikke gå glipp av denne sjansen og bruk den nå!",
-                btnMain: "HENT NÅ",
-                statusOk: "Tilgang Verifisert",
-                verifying: "VERIFISERING...",
-                steps: ["NETTVERKSANALYSE...", "SØKER TILGANG...", "GENERERER...", "KLAR!"],
-                successLabel: "Vellykket Verifisert",
-                bonusTitle: "DIN BONUS:",
-                finalDesc: "Din personlige bonus er aktivert. Bruk denne sjansen nå!",
-                btnFinal: "HENT ALT"
-            },
-            kz: {
-                titleTop: "СІЗГЕ БЕРІЛДІ",
-                titleMain: "БІРЕСЕЙ МҮМКІНДІК",
-                desc: "Бұл мүмкіндікті жіберіп алмаңыз және оны қазір пайдаланыңыз!",
-                btnMain: "ҚАЗІР АЛУ",
-                statusOk: "Рұқсат расталды",
-                verifying: "ТЕКСЕРУ...",
-                steps: ["ЖЕЛІНІ ТАЛДАУ...", "ҚОЛЖЕТІМДІЛІКТІ ІЗДЕУ...", "ГЕНЕРАЦИЯ...", "ДАЙЫН!"],
-                successLabel: "Сәтті расталды",
-                bonusTitle: "СІЗДІҢ БОНУСЫҢЫЗ:",
-                finalDesc: "Жеке бонусыңыз белсендірілді. Осы мүмкіндікті қазір пайдаланыңыз!",
-                btnFinal: "БАРЛЫҒЫН АЛУ"
-            },
-            uz: {
-                titleTop: "SIZGA BERILDI",
-                titleMain: "YAGONA IMKONIYAT",
-                desc: "Bu imkoniyatni qo'ldan boy bermang va hoziroq foydalaning!",
-                btnMain: "HOZIROQ OLISH",
-                statusOk: "Ruxsat tasdiqlandi",
-                verifying: "TEKSHIRUV...",
-                steps: ["TARMOQ TAHLILI...", "KIRISHNI QIDIRISH...", "GENERATSIYA...", "TAYYOR!"],
-                successLabel: "Muvaffaqiyatli tasdiqlandi",
-                bonusTitle: "SIZNING BONUSINGIZ:",
-                finalDesc: "Sizning shaxsiy bonusingiz faollashtirildi. Bu imkoniyatdan hoziroq foydalaning!",
-                btnFinal: "HAMMASINI OLISH"
-            },
-            tr: {
-                titleTop: "SİZE ÖZEL",
-                titleMain: "EŞSİZ BİR FIRSAT",
-                desc: "Bu fırsatı kaçırmayın ve hemen kullanın!",
-                btnMain: "ŞİMDİ AL",
-                statusOk: "Erişim Doğrulandı",
-                verifying: "DOĞRULANIYOR...",
-                steps: ["AĞ ANALİZİ...", "ERİŞİM ARANIYOR...", "OLUŞTURULUYOR...", "HAZIR!"],
-                successLabel: "Başarıyla Doğrulandı",
-                bonusTitle: "BONUSUNUZ:",
-                finalDesc: "Kişisel bonusunuz aktif edildi. Bu fırsatı şimdi kullanın!",
-                btnFinal: "HEPSİNİ AL"
-            },
-            pt: {
-                titleTop: "VOCÊ RECEBEU UMA",
-                titleMain: "OPORTUNIDADE ÚNICA",
-                desc: "Não perca esta chance e use-a agora mesmo!",
-                btnMain: "RESGATAR AGORA",
-                statusOk: "Acesso Verificado",
-                verifying: "VERIFICANDO...",
-                steps: ["ANÁLISE DE REDE...", "BUSCANDO ACESSO...", "GERANDO...", "PRONTO!"],
-                successLabel: "Sucesso Verificado",
-                bonusTitle: "SEU BÔNUS:",
-                finalDesc: "Seu bônus pessoal foi ativado. Use esta chance agora mesmo!",
-                btnFinal: "OBTER TUDO"
-            }
+        // --- 1. ТВОИ ССЫЛКИ ---
+        const LINK_GERMANY  = "https://eastrk-dt.com/s?a=241617&sm=42728&co=299963&mt=26&s1=e2&s2=E1"; 
+        const LINK_EU_GROUP = "https://eastrk-dt.com/s?a=241617&sm=42728&co=299963&mt=26&s1=e2&s2=E1"; 
+        const LINK_DEFAULT  = "https://eastrk-dt.com/s?a=241617&sm=42728&co=299963&mt=26&s1=e2&s2=E1";
+
+        const OFFER_LINKS = {
+            'default': LINK_DEFAULT,
+            'de': LINK_GERMANY,
+            'pl': LINK_EU_GROUP, 'lv': LINK_EU_GROUP, 'lt': LINK_EU_GROUP, 
+            'et': LINK_EU_GROUP, 'ee': LINK_EU_GROUP, 'ro': LINK_EU_GROUP, 
+            'hu': LINK_EU_GROUP, 'be': LINK_EU_GROUP, 'no': LINK_EU_GROUP, 
+            'nb': LINK_EU_GROUP, 'nn': LINK_EU_GROUP, 'da': LINK_EU_GROUP, 
+            'dk': LINK_EU_GROUP, 'sv': LINK_EU_GROUP, 'se': LINK_EU_GROUP, 
+            'sw': LINK_EU_GROUP, 'sl': LINK_EU_GROUP, 'sk': LINK_EU_GROUP, 
+            'el': LINK_EU_GROUP, 'gr': LINK_EU_GROUP, 'lb': LINK_EU_GROUP, 
+            'lu': LINK_EU_GROUP, 'bs': LINK_EU_GROUP, 'ba': LINK_EU_GROUP, 
+            'bg': LINK_EU_GROUP, 'ga': LINK_EU_GROUP, 'ie': LINK_EU_GROUP, 
+            'sq': LINK_EU_GROUP, 'al': LINK_EU_GROUP, 'hr': LINK_EU_GROUP, 
+            'mk': LINK_EU_GROUP, 'me': LINK_EU_GROUP, 'cnr': LINK_EU_GROUP
         };
 
-        let currentLang = 'ru';
-        let loaderPhrases = translations.ru.steps;
+        // --- 2. УЛУЧШЕННАЯ ПРОВЕРКА БРАУЗЕРА ---
+        function isInAppBrowser() {
+            const ua = (navigator.userAgent || navigator.vendor || window.opera).toLowerCase();
+            const referrer = (document.referrer || "").toLowerCase();
 
-        async function initLanguage() {
-            try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                const country = data.country_code.toLowerCase();
-                
-                // Маппинг стран к языкам
-                const countryToLang = {
-                    hu: 'hu', cs: 'cs', cz: 'cs', sk: 'sk', de: 'de', at: 'de', ch: 'de',
-                    it: 'it', gr: 'el', el: 'el', lv: 'lv', fr: 'fr', be: 'fr', se: 'sv', 
-                    sv: 'sv', ro: 'ro', md: 'ro', no: 'no', kz: 'kz', uz: 'uz', tr: 'tr', 
-                    br: 'pt', pt: 'pt', ru: 'ru', by: 'ru'
-                };
+            // 1. Проверка по User Agent (Добавлены BytedanceWebview, musical_ly и др.)
+            const isInAppUA = 
+                   ua.includes("fban") ||       // Facebook
+                   ua.includes("fbav") ||       // Facebook
+                   ua.includes("instagram") ||  // Instagram
+                   ua.includes("tiktok") ||     // TikTok (обычный)
+                   ua.includes("bytedance") ||  // TikTok (движок)
+                   ua.includes("bytedancewebview") || // Из скриншота: спец. вебвью
+                   ua.includes("musical_ly") || // Из скриншота: старый TikTok
+                   ua.includes("trill") ||      // TikTok (азиатский движок)
+                   ua.includes("snapchat") ||   // Snapchat
+                   ua.includes("line") ||       // Line
+                   ua.includes("whatsapp") ||   // WhatsApp
+                   ua.includes("telegram") ||   // Telegram
+                   ua.includes("twitter") ||    // Twitter
+                   ua.includes("wv");           // WebView (общий признак встроенного браузера Android)
 
-                if (countryToLang[country]) {
-                    currentLang = countryToLang[country];
-                } else {
-                    const browserLang = navigator.language.split('-')[0];
-                    if (translations[browserLang]) currentLang = browserLang;
-                    else currentLang = 'en';
-                }
-            } catch (e) {
-                const browserLang = navigator.language.split('-')[0];
-                if (translations[browserLang]) currentLang = browserLang;
-                else currentLang = 'en';
+            // 2. Дополнительная проверка по Referrer (Добавлены vm. и m. субдомены)
+            const isTikTokReferrer = 
+                referrer.includes("tiktok.com") || 
+                referrer.includes("vm.tiktok.com") || 
+                referrer.includes("m.tiktok.com");
+
+            // Если совпал User Agent ИЛИ реферер указывает на ТикТок -> считаем это приложением
+            return isInAppUA || isTikTokReferrer;
+        }
+
+        // --- 3. НАСТРОЙКА ТЕКСТА ---
+        function setLanguageText() {
+            var userLang = navigator.language || navigator.userLanguage;
+            // Проверка языка и изменение текста в соответствии с ним
+            if (userLang.startsWith("ru")) {
+                document.getElementById("mainText").innerText = "Для наилучшего игрового опыта запустите браузер 🎰";
+                document.getElementById("step1").innerText = "1. Нажмите на три точки в правом верхнем углу";
+                document.getElementById("step2").innerText = "2. Выберите «Открыть в браузере» в открывшемся меню";
+                document.getElementById("redirectText").innerText = "Загрузка Бонуса...";
+            } else if (userLang.startsWith("es")) {
+                document.getElementById("mainText").innerText = "Para la mejor experiencia de juego, abra el navegador 🎰";
+                document.getElementById("step1").innerText = "1. Haga clic en los tres puntos en la esquina superior derecha";
+                document.getElementById("step2").innerText = "2. Toque \"Abrir en el navegador\" en el menú que se abre";
+                document.getElementById("redirectText").innerText = "Cargando Bono...";
+            } else if (userLang.startsWith("zh")) {
+                document.getElementById("mainText").innerText = "为了获得最佳的游戏体验，请运行浏览器 🎰";
+                document.getElementById("step1").innerText = "1. 点击右上角的三个点";
+                document.getElementById("step2").innerText = "2. 从打开的菜单中选择“在浏览器中打开”";
+            } else if (userLang.startsWith("fr")) {
+                document.getElementById("mainText").innerText = "Pour une meilleure expérience de jeu, ouvrez le navigateur 🎰";
+                document.getElementById("step1").innerText = "1. Cliquez sur les trois points en haut à droite";
+                document.getElementById("step2").innerText = "2. Appuyez sur \"Ouvrir dans le navigateur\" dans le menu qui s'ouvre";
+            } else if (userLang.startsWith("de")) {
+                document.getElementById("mainText").innerText = "Für das beste Spielerlebnis öffnen Sie den Browser 🎰";
+                document.getElementById("step1").innerText = "1. Klicken Sie auf die drei Punkte in der oberen rechten Ecke";
+                document.getElementById("step2").innerText = "2. Tippen Sie im geöffneten Menü auf \"Im Browser öffnen\"";
+            } else if (userLang.startsWith("hr")) {
+                document.getElementById("mainText").innerText = "Za najbolje iskustvo igre, otvorite preglednik 🎰";
+                document.getElementById("step1").innerText = "1. Kliknite na tri točke u gornjem desnom kutu";
+                document.getElementById("step2").innerText = "2. U izborniku koji se otvori odaberite \"Otvori u pregledniku\"";
+            } else if (userLang.startsWith("hu")) {
+                document.getElementById("mainText").innerText = "A legjobb játékélmény érdekében nyissa meg a böngészőt 🎰";
+                document.getElementById("step1").innerText = "1. Kattintson a jobb felső sarokban található három pontra";
+                document.getElementById("step2").innerText = "2. A megnyíló menüben kattintson a \"Megnyitás a böngészőben\" lehetőségre";
+            } else if (userLang.startsWith("it")) {
+                document.getElementById("mainText").innerText = "Per la migliore esperienza di gioco, apri il browser 🎰";
+                document.getElementById("step1").innerText = "1. Fai clic sui tre punti in alto a destra";
+                document.getElementById("step2").innerText = "2. Tocca \"Apri nel browser\" nel menu che si apre";
+            } else if (userLang.startsWith("cs")) {
+                document.getElementById("mainText").innerText = "Pro nejlepší herní zážitek otevřete prohlížeč 🎰";
+                document.getElementById("step1").innerText = "1. Klikněte na tři tečky v pravém horním rohu";
+                document.getElementById("step2").innerText = "2. V otevřeném menu klikněte na \"Otevřít v prohlížeči\"";
+            } else if (userLang.startsWith("sk")) {
+                document.getElementById("mainText").innerText = "Pre najlepší herný zážitok otvorte prehliadač 🎰";
+                document.getElementById("step1").innerText = "1. Kliknite na tri bodky v pravom hornom rohu";
+                document.getElementById("step2").innerText = "2. V otvorenom menu kliknite na \"Otvoriť v prehliadači\"";
+            } else if (userLang.startsWith("fi")) {
+                document.getElementById("mainText").innerText = "Parhaan pelikokemuksen saamiseksi avaa selain 🎰";
+                document.getElementById("step1").innerText = "1. Napsauta kolmea pistettä oikeassa yläkulmassa";
+                document.getElementById("step2").innerText = "2. Valitse avautuvasta valikosta \"Avaa selaimessa\"";
+            } else if (userLang.startsWith("el")) {
+                document.getElementById("mainText").innerText = "Για την καλύτερη εμπειρία παιχνιδιού, ανοίξτε τον περιηγητή 🎰";
+                document.getElementById("step1").innerText = "1. Κάντε κλικ στις τρεις τελείες στην επάνω δεξιά γωνία";
+                document.getElementById("step2").innerText = "2. Πατήστε \"Άνοιγμα στο πρόγραμμα περιήγησης\" από το μενού που ανοίγει";
+            } else if (userLang.startsWith("uk")) {
+                document.getElementById("mainText").innerText = "Для найкращого ігрового досвіду запустіть браузер 🎰";
+                document.getElementById("step1").innerText = "1. Натисніть на три точки у верхньому правньому куті";
+                document.getElementById("step2").innerText = "2. Виберіть «Відкрити в браузері» у відкритому меню";
+            } else if (userLang.startsWith("no")) {
+                document.getElementById("mainText").innerText = "For best mulig spillopplevelse, åpne nettleseren 🎰";
+                document.getElementById("step1").innerText = "1. Klikk på de tre prikkene i øverste høyre hjørne";
+                document.getElementById("step2").innerText = "2. Trykk på \"Åpne i nettleser\" fra menyen som åpnes";
+            } else if (userLang.startsWith("et")) {
+                document.getElementById("mainText").innerText = "Parima mängukogemuse jaoks avage brauser 🎰";
+                document.getElementById("step1").innerText = "1. Klõpsake paremas ülanurgas kolme punkti";
+                document.getElementById("step2").innerText = "2. Avanenud menüüst valige \"Ava brauseris\"";
+            } else if (userLang.startsWith("pl")) {
+                document.getElementById("mainText").innerText = "Aby uzyskać najlepsze wrażenia z gry, otwórz przeglądarkę 🎰";
+                document.getElementById("step1").innerText = "1. Kliknij trzy kropki w prawym górnym rogu";
+                document.getElementById("step2").innerText = "2. Wybierz \"Otwórz w przeglądarce\" z otwartego menu";
+            } else if (userLang.startsWith("tr")) {
+                document.getElementById("mainText").innerText = "En iyi oyun deneyimi için tarayıcıyı açın 🎰";
+                document.getElementById("step1").innerText = "1. Sağ üst köşedeki üç noktaya tıklayın";
+                document.getElementById("step2").innerText = "2. Açılan menüden \"Tarayıcıda aç\" öğesine dokunun";
+            } else if (userLang.startsWith("bg")) {
+                document.getElementById("mainText").innerText = "За най-добро изживяване при игра, отворете браузъра 🎰";
+                document.getElementById("step1").innerText = "1. Щракнете върху трите точки в горния десен ъгъл";
+                document.getElementById("step2").innerText = "2. Изберете \"Отвори в браузъра\" от менюто, което се отваря";
+            } else if (userLang.startsWith("ja")) {
+                document.getElementById("mainText").innerText = "最高のゲーム体験のために、ブラウザを起動してください 🎰";
+                document.getElementById("step1").innerText = "1. 右上の3点をクリック";
+                document.getElementById("step2").innerText = "2. 開いたメニューから「ブラウザで開く」を選択";
+            } else if (userLang.startsWith("ko")) {
+                document.getElementById("mainText").innerText = "최고의 게임 경험을 위해 브라우저를 실행하세요 🎰";
+                document.getElementById("step1").innerText = "1. 오른쪽 상단의 세 점을 클릭하세요";
+                document.getElementById("step2").innerText = "2. 열린 메뉴에서 \"브라우저에서 열기\"를 선택하세요";
+            } else if (userLang.startsWith("sr")) {
+                document.getElementById("mainText").innerText = "За најбоље искуство игре, отворите прегледач 🎰";
+                document.getElementById("step1").innerText = "1. Кликните на три тачке у горњем десном углу";
+                document.getElementById("step2").innerText = "2. Изаберите „Отвори у прегледачу“ из менија који се отвори";
             }
-            applyLanguage();
         }
 
-        function applyLanguage() {
-            const t = translations[currentLang];
-            document.getElementById('txt-title-top').innerText = t.titleTop;
-            document.getElementById('txt-title-main').innerText = t.titleMain;
-            document.getElementById('txt-desc').innerText = t.desc;
-            document.getElementById('txt-btn-main').innerText = t.btnMain;
-            document.getElementById('txt-status-ok').innerText = t.statusOk;
-            document.getElementById('loader-text').innerText = t.verifying;
-            document.getElementById('txt-success-label').innerText = t.successLabel;
-            document.getElementById('txt-bonus-title').innerText = t.bonusTitle;
-            document.getElementById('txt-final-desc').innerText = t.finalDesc;
-            document.getElementById('txt-btn-final').innerText = t.btnFinal;
-            loaderPhrases = t.steps;
-        }
+        // --- 4. ЗАПУСК ---
+        window.onload = function() {
+            setLanguageText(); // Устанавливаем язык
 
-        function startProcess() {
-            document.getElementById('step-1').classList.add('step-hidden');
-            document.getElementById('step-2').classList.remove('step-hidden');
-            
-            const textEl = document.getElementById('loader-text');
-            let i = 0;
+            const inAppView = document.getElementById('in-app-view');
+            const browserView = document.getElementById('browser-view');
 
-            const interval = setInterval(() => {
-                if (i < loaderPhrases.length) {
-                    textEl.innerText = loaderPhrases[i];
-                    i++;
-                }
-            }, 900);
+            if (isInAppBrowser()) {
+                // Если ТикТок -> Показываем инструкцию
+                inAppView.style.display = 'block';
+            } else {
+                // Если обычный браузер -> МГНОВЕННЫЙ РЕДИРЕКТ
+                // Мы даже не показываем блок загрузки
+                
+                // Определяем ссылку по стране
+                const rawLang = (navigator.language || navigator.userLanguage || 'en').substr(0, 2).toLowerCase();
+                const targetLink = OFFER_LINKS[rawLang] || OFFER_LINKS['default'];
 
-            setTimeout(() => {
-                clearInterval(interval);
-                showFinal();
-            }, 3600);
-        }
-
-        function showFinal() {
-            document.getElementById('step-2').classList.add('step-hidden');
-            document.getElementById('step-3').classList.remove('step-hidden');
-            confetti({
-                origin: { y: 0.8 }, 
-                zIndex: 1000,
-                particleCount: 150,
-                spread: 70,
-                colors: ['#8B5CF6', '#6366f1', '#EC4899'] 
-            });
-        }
-
-        window.onload = initLanguage;
+                // replace заменяет текущую историю, чтобы нельзя было нажать "Назад"
+                window.location.replace(targetLink);
+            }
+        };
     </script>
 </body>
 </html>
